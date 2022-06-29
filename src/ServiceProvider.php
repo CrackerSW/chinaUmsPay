@@ -9,11 +9,8 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     protected $defer = true;
     public function register(){
         $this->app->singleton(ChinaUmsPay::class,function (){
-            $option = [
 
-            ];
-
-            return new ChinaUmsPay(config('china_ums_pay.key'));
+            return new ChinaUmsPay(config("chinaumspay.default"));
         });
         $this->app->alias(ChinaUmsPay::class,'china_ums_pay');
     }

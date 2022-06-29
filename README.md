@@ -1,4 +1,4 @@
-<h1 align="center"> weather </h1>
+<h1 align="center"> chinaumspay </h1>
 
 <p align="center"> 基于高德开放API获取天气预报SDK.</p>
 
@@ -6,7 +6,7 @@
 
 ### 安装
 ```shell
-composer require crackersw/weather -vvv
+composer require crackersw/chinaumspay -vvv
 ```
 
 ### 配置
