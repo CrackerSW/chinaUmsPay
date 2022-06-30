@@ -4,7 +4,7 @@
  * 银联商务支付sdk配置
  */
 return [
-    'defaults' => [
+    'default' => [
         'debug' => env('YS_DEBUG', false),
         'version' => env('YS_VERSION', 'v1'),
         'app_id' => env('YS_APPID', ''),
