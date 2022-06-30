@@ -12,7 +12,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         $this->app->singleton(ChinaUmsPay::class, function () {
 
-            return new ChinaUmsPay(config("chinaumspay.defaults"));
+            return new ChinaUmsPay(config("chinaumspay.default"));
         });
         $this->app->alias(ChinaUmsPay::class, 'china_ums_pay');
     }
