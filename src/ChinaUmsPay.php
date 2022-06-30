@@ -20,8 +20,7 @@ class ChinaUmsPay
     protected $guzzleOptions = [];
 
     protected $sign_method = "SHA256";
-    protected $url = 'https://api-mop.chinaums.com/';               #正式地址
-    protected $test_url = 'https://test-api-open.chinaums.com/';    #测试地址
+    protected $url;
     protected $debug = false;
     protected $version = "v1";
     protected $app_id;
@@ -46,6 +45,11 @@ class ChinaUmsPay
         $this->msg_src_id = $config['msg_src_id'] ?? $this->msg_src_id;
         $this->need_token = $config['need_token'] ?? $this->need_token;
         $this->need_data_tag = $config['$need_data_tag'] ?? $this->need_data_tag;
+        if ($this->debug) {
+            $this->url = "https://test-api-open.chinaums.com/" . $this->version; #测试地址
+        } else {
+            $this->url = "https://api-mop.chinaums.com/" . $this->version; #正式地址
+        }
     }
 
     public function getHttpClient()
@@ -144,11 +148,7 @@ class ChinaUmsPay
             throw new InvalidArgumentException('appId and appKey is not empty!');
         }
         try {
-            if ($this->debug) {
-                $url = $this->test_url . $this->version . "/token/access";
-            } else {
-                $url = $this->url . $this->version . "/token/access";
-            }
+            $url = $this->url . "/token/access";
             $response = $this->getHttpClient()->request('POST', $url, [
                 'json' => $data
             ])->getBody()->getContents();
@@ -162,4 +162,8 @@ class ChinaUmsPay
             throw new HttpException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
+
+
+
+
 }
