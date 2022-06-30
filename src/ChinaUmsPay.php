@@ -46,7 +46,6 @@ class ChinaUmsPay
         $this->msg_src_id = $config['msg_src_id'] ?? $this->msg_src_id;
         $this->need_token = $config['need_token'] ?? $this->need_token;
         $this->need_data_tag = $config['$need_data_tag'] ?? $this->need_data_tag;
-
     }
 
     public function getHttpClient()
@@ -57,6 +56,7 @@ class ChinaUmsPay
     public function setGuzzleOptions(array $options)
     {
         $this->guzzleOptions = $options;
+        return $this;
     }
 
 
@@ -69,6 +69,51 @@ class ChinaUmsPay
         $uuid .= substr($str, 16, 4) . '-';
         $uuid .= substr($str, 20, 12);
         return $prefix . $uuid;
+    }
+
+    /**
+     * @return string
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function createMerOrderId(): string
+    {
+        $now = now();
+        $cache = $this->getCache();
+        while (!isset($mer_order_id) || $cache->has($mer_order_id)) {
+            $micro = str_pad(substr($now->micro, 0, 3), 3, '0', STR_PAD_LEFT);
+            $mer_order_id = $this->msg_src_id . $now->format('YmdHis') . $micro . self::randNum(7);
+        }
+        $cache->set($mer_order_id, $mer_order_id, 5);
+        return $mer_order_id;
+    }
+
+    /**
+     * @param int $length
+     * @param int $type 1数字，2大小写字母，3大小写字母数字
+     * @return string
+     */
+    public static function randNum(int $length = 10, int $type = 1): string
+    {
+        switch ($type) {
+            case 2:
+                $str = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                break;
+            case 3:
+                $str = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                break;
+            case 1:
+            default:
+                $str = '0123456789';
+                break;
+        }
+        //字符组合
+        $len = strlen($str) - 1;
+        $randStr = '';
+        for ($i = 0; $i < $length; $i++) {
+            $num = mt_rand(0, $len);
+            $randStr .= $str[$num];
+        }
+        return $randStr;
     }
 
     /**
@@ -104,9 +149,9 @@ class ChinaUmsPay
             } else {
                 $url = $this->url . $this->version . "/token/access";
             }
-            $response = $this->getHttpClient()->post($url,['json'=>$data])->getBody()->getContents();
-            return $response;
-//            $response = Http::post($url, $data);
+            $response = $this->getHttpClient()->request('POST', $url, [
+                'json' => $data
+            ])->getBody()->getContents();
             $response = json_decode($response, true);
             if ($response['errCode'] !== '0000') {
                 throw new InvalidArgumentException($response['errInfo'], $response['errCode']);
@@ -117,10 +162,4 @@ class ChinaUmsPay
             throw new HttpException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
-
-
-
-
-
-
 }
