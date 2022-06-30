@@ -72,6 +72,7 @@ class ChinaUmsPay
     }
 
     /**
+     * 获取TOKEN
      * @throws HttpException
      * @throws InvalidArgumentException
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -79,7 +80,6 @@ class ChinaUmsPay
      */
     public function getAccessToken()
     {
-        info([__METHOD__, __LINE__, '开始获取toekn']);
         $cache = $this->getCache();
         $cacheKey = "chinaumspay_token_" . $this->app_id;
 
@@ -98,21 +98,16 @@ class ChinaUmsPay
         if (!$this->app_id || !$this->app_key) {
             throw new InvalidArgumentException('appId and appKey is not empty!');
         }
-        info([__METHOD__, __LINE__, '请求报文', $data]);
         try {
             if ($this->debug) {
                 $url = $this->test_url . $this->version . "/token/access";
             } else {
                 $url = $this->url . $this->version . "/token/access";
             }
-            $response = Http::post($url, $data);
+            $response = $this->getHttpClient()->post($url,['json'=>$data])->getBody()->getContents();
+            return $response;
+//            $response = Http::post($url, $data);
             $response = json_decode($response, true);
-//            $response = [
-//                'errCode' => "0000",
-//                'errInfo' => "正常",
-//                'accessToken' => "0beae96eb1004b8792b27279fed75ea5",
-//                'expiresIn' => 3600,
-//            ];
             if ($response['errCode'] !== '0000') {
                 throw new InvalidArgumentException($response['errInfo'], $response['errCode']);
             }
@@ -122,4 +117,10 @@ class ChinaUmsPay
             throw new HttpException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
+
+
+
+
+
+
 }
