@@ -1,22 +1,27 @@
 <?php
 namespace CrackerSw\ChinaUmsPay\Request;
 
-use CrackerSw\ChinaUmsPay\ChinaUmsPay;
+use CrackerSw\ChinaUmsPay\BaseOrder;
 use CrackerSw\ChinaUmsPay\Exceptions\HttpException;
 use CrackerSw\ChinaUmsPay\Exceptions\InvalidArgumentException;
 
-class ChinaUmsQrcodeOrder extends ChinaUmsPay
+class ChinaUmsQrcodeOrder extends BaseOrder
 {
     /**
      * 获取二维码
      * @param $data
+     * @return array
      * @throws HttpException
      * @throws InvalidArgumentException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function getQrcode($data)
+    public function getQrcode($data): array
     {
         $uri = '/netpay/bills/get-qrcode';
-        $token = $this->getAccessToken();
+        $data['billNo'] = $this->createMerOrderId();
+        $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
+        info([__METHOD__,__LINE__,$uri,$data]);
+        return $this->request($uri,$data);
     }
 
     /**

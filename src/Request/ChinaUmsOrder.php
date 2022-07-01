@@ -13,42 +13,44 @@ class ChinaUmsOrder extends BaseOrder
     /**
      * 微信小程序下单
      * @param $data
-     * @throws HttpException
-     * @throws InvalidArgumentException
-     */
-    public function createUnifiedOrder($data)
-    {
-        $uri = '/netpay/wx/unified-order';
-        $token = $this->getAccessToken();
-    }
-
-    /**
-     * 微信app下单
      * @return array
      * @throws HttpException
      * @throws InvalidArgumentException
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function createWxAppOrder(): array
+    public function createUnifiedOrder($data): array
+    {
+        $uri = '/netpay/wx/unified-order';
+        info([__METHOD__,__LINE__,$uri,$data]);
+        $data['merOrderId'] = $this->createMerOrderId();
+        $data['tradeType'] = 'MINI';
+        return $this->request($uri,$data);
+    }
+
+    /**
+     * 微信app下单
+     * @param $data
+     * @return array
+     * @throws HttpException
+     * @throws InvalidArgumentException
+     */
+    public function createWxAppOrder($data): array
     {
         $uri = '/netpay/wx/app-pre-order';
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
         $data['merOrderId'] = $this->createMerOrderId();
         $data['tradeType'] = 'APP';
-        $data['totalAmount'] = 10;
         info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 
     /**
      * 支付宝app下单
+     * @param $data
      * @return array
      * @throws HttpException
      * @throws InvalidArgumentException
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     *
-     *
-     * "data": {
+     *   * "data": {
     "connectSys": "UNIONPAY",
     "delegatedFlag": "N",
     "merName": "中保付测试商户(中保付测试商户)",
@@ -69,14 +71,12 @@ class ChinaUmsOrder extends BaseOrder
     "merOrderId": "103A202207011343523707956735", 103A202207011411206293888540
     "status": "NEW_ORDER",
     "targetSys": "Alipay 2.0"
-    },
      */
-    public function createAliAppOrder(): array
+    public function createAliAppOrder($data): array
     {
         $uri = '/netpay/trade/precreate';
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
         $data['merOrderId'] = $this->createMerOrderId();
-        $data['totalAmount'] = 10;
         info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
@@ -84,80 +84,122 @@ class ChinaUmsOrder extends BaseOrder
     /**
      * 云闪付小程序下单
      * @param $data
+     * @return array
      * @throws HttpException
      * @throws InvalidArgumentException
      */
-    public function createUacMiniOrder($data)
+    public function createUacMiniOrder($data): array
     {
         $uri = '/netpay/uac/mini-order';
-        $token = $this->getAccessToken();
+        $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
+        $data['merOrderId'] = $this->createMerOrderId();
+        info([__METHOD__,__LINE__,$uri,$data]);
+        return $this->request($uri,$data);
     }
 
     /**
      * 云闪付小程序下单
      * @param $data
+     * @return array
      * @throws HttpException
      * @throws InvalidArgumentException
      */
-    public function createUacAppOrder($data)
+    public function createUacAppOrder($data): array
     {
         $uri = '/netpay/uac/app-order';
-        $token = $this->getAccessToken();
+        $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
+        $data['merOrderId'] = $this->createMerOrderId();
+        info([__METHOD__,__LINE__,$uri,$data]);
+        return $this->request($uri,$data);
     }
 
 
     /**
      * 订单查询
-     * @param $data
+     * @param string $order_no
+     * @return array
+     * @throws HttpException
+     * @throws InvalidArgumentException
+     *   *   "payTime": "2022-07-01 13:43:51",
+    "connectSys": "UNIONPAY",
+    "delegatedFlag": "N",
+    "errMsg": "交易不存在",
+    "merName": "中保付测试商户(中保付测试商户)",
+    "mid": "898201612345678",
+    "settleDate": "2022-07-01",
+    "settleRefId": "01127600061N",
+    "tid": "88880001",
+    "totalAmount": 10,
+    "chnlCost": "1266000048020000",
+    "targetMid": "2088510029762068",
+    "responseTimestamp": "2022-07-01 15:30:21",
+    "errCode": "SUCCESS",
+    "targetStatus": "40004|ACQ.TRADE_NOT_EXIST",
+    "seqId": "01127600061N",
+    "merOrderId": "103A202207011343523707956735",
+    "refundAmount": 0,
+    "status": "NEW_ORDER",
+    "targetSys": "Alipay 2.0"
      */
-    public function orderQuery($data)
+    public function orderQuery(string $order_no): array
     {
         $uri = '/netpay/query';
+        $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
+        $data['merOrderId'] = $order_no;
+        info([__METHOD__,__LINE__,$uri,$data]);
+        return $this->request($uri,$data);
     }
 
     /**
      * 退款
      */
-    public function orderRefund()
+    public function orderRefund($data): array
     {
         $uri = '/netpay/refund' ;
+        $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
+        info([__METHOD__,__LINE__,$uri,$data]);
+        return $this->request($uri,$data);
     }
 
     /**
      * 退款查询
      * @param $data
+     * @return array
+     * @throws HttpException
+     * @throws InvalidArgumentException
      */
-    public function orderRefundQuery($data)
+    public function orderRefundQuery($data): array
     {
         $uri = '/netpay/refund-query' ;
+        $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
+        info([__METHOD__,__LINE__,$uri,$data]);
+        return $this->request($uri,$data);
     }
 
     /**
      * 订单关闭
      */
-    public function orderClose()
+    public function orderClose($order_no): array
     {
         $uri = '/netpay/close';
+        $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
+        $data['merOrderId'] = $order_no;
+        info([__METHOD__,__LINE__,$uri,$data]);
+        return $this->request($uri,$data);
     }
 
     /**
      * 异步分账确认
      * @param $datas
+     * @return array
+     * @throws HttpException
+     * @throws InvalidArgumentException
      */
-    public function subOrdersConfirm($datas)
+    public function subOrdersConfirm($datas): array
     {
         $uri = '/netpay/sub-orders-confirm';
-    }
-
-//    public function
-
-    /**
-     * 发送请求
-     * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function send(): array
-    {
-       //$this->sendRequest(self::SERVICE_CODE,$data);
+        $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
+        info([__METHOD__,__LINE__,$uri,$data]);
+        return $this->request($uri,$data);
     }
 }
