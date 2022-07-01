@@ -1,13 +1,12 @@
 <?php
 
-namespace CrackerSw\chinaUmsPay;
+namespace CrackerSw\ChinaUmsPay;
 
 use CrackerSw\ChinaUmsPay\Kernel\InteractsWithCache;
 use CrackerSw\ChinaUmsPay\Exceptions\HttpException;
 use CrackerSw\ChinaUmsPay\Exceptions\InvalidArgumentException;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Http;
-use function AlibabaCloud\Client\json;
+use GuzzleHttp\Exception\GuzzleException;
 
 
 class ChinaUmsPay
@@ -15,8 +14,6 @@ class ChinaUmsPay
 
     use InteractsWithCache;
 
-    protected $service_code;
-    protected $api_method_name;
     protected $guzzleOptions = [];
 
     protected $sign_method = "SHA256";
@@ -44,12 +41,17 @@ class ChinaUmsPay
         $this->inst_mid = $config['inst_mid'] ?? $this->inst_mid;
         $this->msg_src_id = $config['msg_src_id'] ?? $this->msg_src_id;
         $this->need_token = $config['need_token'] ?? $this->need_token;
-        $this->need_data_tag = $config['$need_data_tag'] ?? $this->need_data_tag;
+        $this->need_data_tag = $config['need_data_tag'] ?? $this->need_data_tag;
         if ($this->debug) {
             $this->url = "https://test-api-open.chinaums.com/" . $this->version; #测试地址
         } else {
             $this->url = "https://api-mop.chinaums.com/" . $this->version; #正式地址
         }
+    }
+
+    public function _initialize(): void
+    {
+
     }
 
     public function getHttpClient()
@@ -122,19 +124,34 @@ class ChinaUmsPay
 
     /**
      * 获取TOKEN
-     * @throws HttpException
      * @throws InvalidArgumentException
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws HttpException
      */
-    public function getAccessToken()
+    protected function getAccessToken()
     {
         $cache = $this->getCache();
         $cacheKey = "chinaumspay_token_" . $this->app_id;
-
-        if ($cache->has($cacheKey)) {
+        try {
+            if (!$cache->has($cacheKey)) {
+                $this->refreshAccessToken($cacheKey);
+            }
             return $cache->get($cacheKey);
+        } catch (\Psr\SimpleCache\InvalidArgumentException $exception) {
+            throw new InvalidArgumentException($exception->getMessage(), $exception->getCode(),$exception);
         }
+    }
+
+    /**
+     * @param string $cacheKey
+     * @throws HttpException
+     * @throws InvalidArgumentException
+     */
+    private function refreshAccessToken(string$cacheKey): void
+    {
+        if (!$this->app_id || !$this->app_key) {
+            throw new InvalidArgumentException('appId and appKey is not empty!');
+        }
+        $cache = $this->getCache();
         $nonce = self::createUuid();
         $timestamp = now()->format('YmdHis');
         $data = [
@@ -144,26 +161,33 @@ class ChinaUmsPay
             'signMethod' => $this->sign_method,
             'signature' => hash($this->sign_method, $this->app_id . $timestamp . $nonce . $this->app_key),
         ];
-        if (!$this->app_id || !$this->app_key) {
-            throw new InvalidArgumentException('appId and appKey is not empty!');
+
+        $response = $this->sendRequest("/token/access", $data);
+        if ($response['errCode'] !== '0000') {
+            throw new InvalidArgumentException($response['errInfo'], $response['errCode']);
         }
         try {
-            $url = $this->url . "/token/access";
-            $response = $this->getHttpClient()->request('POST', $url, [
-                'json' => $data
-            ])->getBody()->getContents();
-            $response = json_decode($response, true);
-            if ($response['errCode'] !== '0000') {
-                throw new InvalidArgumentException($response['errInfo'], $response['errCode']);
-            }
             $cache->set($cacheKey, $response['accessToken'], 3300);
-            return $response['accessToken'];
-        } catch (\Exception $exception) {
-            throw new HttpException($exception->getMessage(), $exception->getCode(), $exception);
+        } catch (\Psr\SimpleCache\InvalidArgumentException $e) {
+            throw new InvalidArgumentException($e->getMessage(), $e->getCode(),$e);
         }
     }
 
-
-
-
+    /**
+     * @throws HttpException
+     */
+    protected function sendRequest($uri, $data, $headers = [], $method = 'POST') : array
+    {
+        $url = $this->url . $uri;
+        try {
+            $response = $this->setGuzzleOptions($headers)
+                ->getHttpClient()
+                ->request($method, $url, [
+                    'json' => $data
+                ])->getBody()->getContents();
+        } catch (GuzzleException $e) {
+            throw new HttpException($e->getMessage(), $e->getCode(), $e);
+        }
+        return json_decode($response, true) ?: [];
+    }
 }

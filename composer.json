@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "CrackerSw\\ChinaUmsPay\\": "./src"
+            "CrackerSw\\ChinaUmsPay\\": "src"
         }
     },
     "require-dev": {
