@@ -4,6 +4,7 @@
 namespace CrackerSw\ChinaUmsPay;
 
 
+use CrackerSw\ChinaUmsPay\Exceptions\HttpException;
 use  CrackerSw\ChinaUmsPay\Exceptions\InvalidArgumentException;
 
 class BaseOrder extends ChinaUmsPay
@@ -44,9 +45,24 @@ class BaseOrder extends ChinaUmsPay
     protected $token;
 
     /**
-     * @var
+     * @var array
      */
     protected $headers;
+
+    /**
+     * @var array
+     */
+    protected $data;
+
+    /**
+     * @var array
+     */
+    protected $response;
+
+    /**
+     * @var array
+     */
+    protected $result;
 
     /**
      * @throws Exceptions\HttpException
@@ -58,11 +74,15 @@ class BaseOrder extends ChinaUmsPay
             $this->token = $this->getAccessToken();
             $this->headers['Authorization'] = 'OPEN-ACCESS-TOKEN AccessToken=' . $this->token;
         }
+        $this->data['tid'] = $this->tid;
+        $this->data['mid'] = $this->mid;
+        $this->data['instMid'] = $this->inst_mid;
+        $this->data['msgSrcId'] = $this->msg_src_id;
     }
 
     protected function setHeaders(array $headers): BaseOrder
     {
-        $this->headers = array_merge($this->headers,$headers);
+        $this->headers = array_merge($this->headers, $headers);
         return $this;
     }
 
@@ -78,26 +98,48 @@ class BaseOrder extends ChinaUmsPay
         return $this;
     }
 
-    protected function setDivisionFlag(bool $divisionFlag) : BaseOrder
+    protected function setDivisionFlag(bool $divisionFlag): BaseOrder
     {
         $this->divisionFlag = $divisionFlag;
         return $this;
     }
 
-    protected function setAsynDivisionFlag(bool $asynDivisionFlag) : BaseOrder
+    protected function setAsynDivisionFlag(bool $asynDivisionFlag): BaseOrder
     {
         $this->asynDivisionFlag = $asynDivisionFlag;
         return $this;
     }
 
     /**
+     * @throws HttpException
+     */
+    public function setResult(): void
+    {
+        if ($this->response && $this->response['errCode'] === "SUCCESS") {
+            if ($this->response['errCode'] === "SUCCESS") {
+                $this->result = $this->response;
+            } else {
+                throw new HttpException($this->response['errMsg']);
+            }
+        } else {
+            throw new HttpException('无效的请求');
+        }
+    }
+
+    public function getResult(): array
+    {
+        return $this->result;
+    }
+
+    /**
      * @param string $uri
      * @param array $data
      * @param string $method
-     * @return array
-     * @throws Exceptions\HttpException|InvalidArgumentException
+     * @return BaseOrder
+     * @throws Exceptions\HttpException
+     * @throws InvalidArgumentException
      */
-    public function request(string $uri, array $data, string $method= 'POST'): array
+    public function request(string $uri, array $data, string $method = 'POST'): BaseOrder
     {
         //开启分账
         if ($this->divisionFlag) {
@@ -111,17 +153,20 @@ class BaseOrder extends ChinaUmsPay
 
         //分账信息
         if ($this->divisionFlag || $this->asynDivisionFlag) {
-            if (empty($this->goods) && empty($this->subOrders)) {
-                throw new InvalidArgumentException('Goods and Suborders cannot at the same time is empty');
-            }
-
             $data['goods'] = $this->goods ?: [];
             $data['subOrders'] = $this->subOrders ?: [];
+            if (empty($data['goods']) && empty($data['subOrders'])) {
+                throw new InvalidArgumentException('Goods and Suborders cannot at the same time is empty');
+            }
         }
 
+        $data = array_merge($data, $this->data);
         if ($this->need_data_tag) {
             $data = ['data' => $data];
         }
-        return $this->sendRequest($uri,$data,['headers' =>$this->headers],$method);
+        info([__METHOD__, __LINE__, $uri, $data, $this->headers]);
+        $this->response = $this->sendRequest($uri, $data, ['headers' => $this->headers], $method);
+        $this->setResult();
+        return $this;
     }
 }

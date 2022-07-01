@@ -47,6 +47,8 @@ class ChinaUmsPay
         } else {
             $this->url = "https://api-mop.chinaums.com/" . $this->version; #正式地址
         }
+
+        $this->_initialize();
     }
 
     public function _initialize(): void
