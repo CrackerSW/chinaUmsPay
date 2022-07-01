@@ -10,36 +10,6 @@ use  CrackerSw\ChinaUmsPay\Exceptions\InvalidArgumentException;
 class BaseOrder extends ChinaUmsPay
 {
     /**
-     * 分账标记
-     * @var bool
-     */
-    protected $divisionFlag = false;
-
-    /**
-     * 异步分账标记
-     * @var bool
-     */
-    protected $asynDivisionFlag = false;
-
-    /**
-     * 分账信息
-     * @var array
-     */
-    protected $subOrders;
-
-    /**
-     * 商品/分账信息
-     * @var array
-     */
-    protected $goods;
-
-    /**
-     * 平台分账金额
-     * @var array
-     */
-    protected $platformAmount;
-
-    /**
      * @var string
      */
     protected $token;
@@ -54,15 +24,6 @@ class BaseOrder extends ChinaUmsPay
      */
     protected $data;
 
-    /**
-     * @var array
-     */
-    protected $response;
-
-    /**
-     * @var array
-     */
-    protected $result;
 
     /**
      * @throws Exceptions\HttpException
@@ -82,79 +43,39 @@ class BaseOrder extends ChinaUmsPay
 
     protected function setHeaders(array $headers): BaseOrder
     {
+        if ($headers['Authorization']) {
+            unset($headers['Authorization']);
+        }
         $this->headers = array_merge($this->headers, $headers);
-        return $this;
-    }
-
-    protected function setSubOrder(array $subOrders): BaseOrder
-    {
-        $this->subOrders = $subOrders;
-        return $this;
-    }
-
-    protected function setGoods(array $goods): BaseOrder
-    {
-        $this->goods = $goods;
-        return $this;
-    }
-
-    protected function setDivisionFlag(bool $divisionFlag): BaseOrder
-    {
-        $this->divisionFlag = $divisionFlag;
-        return $this;
-    }
-
-    protected function setAsynDivisionFlag(bool $asynDivisionFlag): BaseOrder
-    {
-        $this->asynDivisionFlag = $asynDivisionFlag;
         return $this;
     }
 
     /**
      * @throws HttpException
      */
-    public function setResult(): void
+    public function getResult($response): array
     {
-        if ($this->response && $this->response['errCode'] === "SUCCESS") {
-            if ($this->response['errCode'] === "SUCCESS") {
-                $this->result = $this->response;
-            } else {
-                throw new HttpException($this->response['errMsg']);
+        if ($response && $response['errCode'] === "SUCCESS") {
+            if ($response['errCode'] === "SUCCESS") {
+                return $response;
             }
-        } else {
-            throw new HttpException('无效的请求');
+            throw new HttpException($response['errMsg']);
         }
-    }
-
-    public function getResult(): array
-    {
-        return $this->result;
+        throw new HttpException('无效的请求');
     }
 
     /**
      * @param string $uri
      * @param array $data
      * @param string $method
-     * @return BaseOrder
+     * @return array
      * @throws Exceptions\HttpException
      * @throws InvalidArgumentException
      */
-    public function request(string $uri, array $data, string $method = 'POST'): BaseOrder
+    public function request(string $uri, array $data, string $method = 'POST'): array
     {
-        //开启分账
-        if ($this->divisionFlag) {
-            $data['divisionFlag'] = $this->divisionFlag;
-        }
-
-        //异步分账
-        if ($this->asynDivisionFlag) {
-            $data['asynDivisionFlag'] = $this->asynDivisionFlag;
-        }
-
         //分账信息
-        if ($this->divisionFlag || $this->asynDivisionFlag) {
-            $data['goods'] = $this->goods ?: [];
-            $data['subOrders'] = $this->subOrders ?: [];
+        if ((isset($data['divisionFlag']) && $data['divisionFlag']) || (isset($data['asynDivisionFlag']) && $data['asynDivisionFlag'])) {
             if (empty($data['goods']) && empty($data['subOrders'])) {
                 throw new InvalidArgumentException('Goods and Suborders cannot at the same time is empty');
             }
@@ -165,8 +86,7 @@ class BaseOrder extends ChinaUmsPay
             $data = ['data' => $data];
         }
         info([__METHOD__, __LINE__, $uri, $data, $this->headers]);
-        $this->response = $this->sendRequest($uri, $data, ['headers' => $this->headers], $method);
-        $this->setResult();
-        return $this;
+        $response = $this->sendRequest($uri, $data, ['headers' => $this->headers], $method);
+        return $this->getResult($response);
     }
 }

@@ -190,6 +190,7 @@ class ChinaUmsPay
         } catch (GuzzleException $e) {
             throw new HttpException($e->getMessage(), $e->getCode(), $e);
         }
+        info([__METHOD__, __LINE__, $response]);
         return json_decode($response, true) ?: [];
     }
 }

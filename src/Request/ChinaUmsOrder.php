@@ -31,13 +31,13 @@ class ChinaUmsOrder extends BaseOrder
      */
     public function createWxAppOrder(): array
     {
-        $uri = 'netpay/wx/app-pre-order';
+        $uri = '/netpay/wx/app-pre-order';
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
         $data['merOrderId'] = $this->createMerOrderId();
         $data['tradeType'] = 'APP';
         $data['totalAmount'] = 10;
         info([__METHOD__,__LINE__,$uri,$data]);
-        return $this->request($uri,$data)->getResult();
+        return $this->request($uri,$data);
     }
 
     /**
@@ -78,7 +78,7 @@ class ChinaUmsOrder extends BaseOrder
         $data['merOrderId'] = $this->createMerOrderId();
         $data['totalAmount'] = 10;
         info([__METHOD__,__LINE__,$uri,$data]);
-        return $this->request($uri,$data)->getResult();
+        return $this->request($uri,$data);
     }
 
     /**
@@ -158,6 +158,6 @@ class ChinaUmsOrder extends BaseOrder
      */
     public function send(): array
     {
-        //$this->sendRequest(self::SERVICE_CODE,$data);
+       //$this->sendRequest(self::SERVICE_CODE,$data);
     }
 }
