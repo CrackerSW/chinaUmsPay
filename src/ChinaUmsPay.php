@@ -28,6 +28,7 @@ class ChinaUmsPay
     protected $msg_src_id;
     protected $need_token;
     protected $need_data_tag;
+    protected $md5_key;
 
 
     public function __construct(array $config)
@@ -42,6 +43,7 @@ class ChinaUmsPay
         $this->msg_src_id = $config['msg_src_id'] ?? $this->msg_src_id;
         $this->need_token = $config['need_token'] ?? $this->need_token;
         $this->need_data_tag = $config['need_data_tag'] ?? $this->need_data_tag;
+        $this->md5_key = $config['md5_key'] ?? $this->md5_key;
         if ($this->debug) {
             $this->url = "https://test-api-open.chinaums.com/" . $this->version; #测试地址
         } else {

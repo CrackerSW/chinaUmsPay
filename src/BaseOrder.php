@@ -89,4 +89,32 @@ class BaseOrder extends ChinaUmsPay
         $response = $this->sendRequest($uri, $data, ['headers' => $this->headers], $method);
         return $this->getResult($response);
     }
+
+    /**
+     * @param array $data
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function verifySign(array $data): bool
+    {
+        $sign = $data['sign'];
+        unset($data['sign']);
+        ksort($data);
+        //reset()内部指针指向数组中的第⼀个元素
+        reset($data);
+
+        foreach ($data as $k => $v) {
+            if (is_array($v)) {
+                $v = json_encode($v,JSON_UNESCAPED_UNICODE);
+            }
+            $buff .= $k . "=" . $v . "&";
+        }
+
+
+        $verify_sign = hash('sha256',rtrim($buff,'&').$this->md5_key) ;
+        if ($verify_sign !== $sign) {
+            throw new InvalidArgumentException('UMS签名错误',2005);
+        }
+        return true;
+    }
 }

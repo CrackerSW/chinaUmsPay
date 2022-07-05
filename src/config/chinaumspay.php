@@ -15,5 +15,6 @@ return [
         'msg_src_id' => env('YS_MSG_SRCID', ''),
         'need_token' => env('YS_NEED_TOKEN', true),
         'need_data_tag' => env('YS_NEED_DATA_TAG', true),
+        'md5_key' => env('YS_MD5_KEY', true),
     ],
 ];
