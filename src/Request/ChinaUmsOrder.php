@@ -22,6 +22,7 @@ class ChinaUmsOrder extends BaseOrder
     {
         $uri = '/netpay/wx/unified-order';
         info([__METHOD__,__LINE__,$uri,$data]);
+        $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
         $data['merOrderId'] = $this->createMerOrderId();
         $data['tradeType'] = 'MINI';
         return $this->request($uri,$data);
@@ -93,6 +94,7 @@ class ChinaUmsOrder extends BaseOrder
         $uri = '/netpay/uac/mini-order';
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
         $data['merOrderId'] = $this->createMerOrderId();
+        $data['tradeType'] = 'MINI';
         info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
@@ -152,26 +154,32 @@ class ChinaUmsOrder extends BaseOrder
 
     /**
      * 退款
+     * @param $data
+     * @return array
+     * @throws HttpException
+     * @throws InvalidArgumentException
      */
     public function orderRefund($data): array
     {
         $uri = '/netpay/refund' ;
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
+        $data['refundOrderId'] = $this->createMerOrderId();
         info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 
     /**
      * 退款查询
-     * @param $data
+     * @param string $order_no
      * @return array
      * @throws HttpException
      * @throws InvalidArgumentException
      */
-    public function orderRefundQuery($data): array
+    public function orderRefundQuery(string $order_no): array
     {
         $uri = '/netpay/refund-query' ;
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
+        $data['merOrderId'] = $order_no;
         info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }

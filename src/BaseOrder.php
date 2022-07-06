@@ -81,10 +81,15 @@ class BaseOrder extends ChinaUmsPay
             }
         }
 
+        if (isset($data['instMid']) &&$data['instMid']) {
+            $this->data['instMid'] = $data['instMid'];
+        }
+
         $data = array_merge($data, $this->data);
         if ($this->need_data_tag) {
             $data = ['data' => $data];
         }
+
         info([__METHOD__, __LINE__, $uri, $data, $this->headers]);
         $response = $this->sendRequest($uri, $data, ['headers' => $this->headers], $method);
         return $this->getResult($response);

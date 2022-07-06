@@ -134,7 +134,11 @@ class ChinaUmsPay
     protected function getAccessToken()
     {
         $cache = $this->getCache();
-        $cacheKey = "chinaumspay_token_" . $this->app_id;
+        if ($this->debug) {
+            $cacheKey = "chinaumspay_token1_test_" . $this->app_id;
+        } else {
+            $cacheKey = "chinaumspay_token1_" . $this->app_id;  #正式地址
+        }
         try {
             if (!$cache->has($cacheKey)) {
                 $this->refreshAccessToken($cacheKey);
@@ -167,6 +171,8 @@ class ChinaUmsPay
         ];
 
         $response = $this->sendRequest("/token/access", $data);
+        info([__METHOD__, __LINE__, $response, $data]);
+
         if ($response['errCode'] !== '0000') {
             throw new InvalidArgumentException($response['errInfo'], $response['errCode']);
         }
@@ -189,10 +195,13 @@ class ChinaUmsPay
                 ->request($method, $url, [
                     'json' => $data
                 ])->getBody()->getContents();
+            info([__METHOD__, __LINE__, $response]);
         } catch (GuzzleException $e) {
+
+            info([__METHOD__, __LINE__, $data,$headers,$e]);
+
             throw new HttpException($e->getMessage(), $e->getCode(), $e);
         }
-        info([__METHOD__, __LINE__, $response]);
         return json_decode($response, true) ?: [];
     }
 }
