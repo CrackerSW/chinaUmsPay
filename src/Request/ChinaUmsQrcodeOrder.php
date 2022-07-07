@@ -14,11 +14,26 @@ class ChinaUmsQrcodeOrder extends BaseOrder
      * @throws HttpException
      * @throws InvalidArgumentException
      * @throws \Psr\SimpleCache\InvalidArgumentException
+    "data": {
+    "qrCodeId": "147G2207075474017133708486",
+    "errMsg": "查询二维码成功",
+    "mid": "898325273921087",
+    "msgId": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "billDate": "2022-07-07",
+    "tid": "5KRD1FY2",
+    "instMid": "QRPAYDEFAULT",
+    "responseTimestamp": "2022-07-07 13:40:17",
+    "errCode": "SUCCESS",
+    "billNo": "147G202207071340172291962600",
+    "billQRCode": "https://qr.95516.com/48020000/147G2207075474017133708486"
+    },
      */
     public function getQrcode($data): array
     {
         $uri = '/netpay/bills/get-qrcode';
         $data['billNo'] = $this->createMerOrderId();
+        $data['billDate'] = now()->format('Y-m-d H:i:s');
+        $data['instMid'] = self::QRPAY_INST_MID;
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
         info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
@@ -31,6 +46,9 @@ class ChinaUmsQrcodeOrder extends BaseOrder
     public function updateQrcode($data)
     {
         $uri = '/netpay/bills/update-qrcode';
+        $data['instMid'] = self::QRPAY_INST_MID;
+        $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
+
     }
 
     /**
@@ -39,15 +57,25 @@ class ChinaUmsQrcodeOrder extends BaseOrder
     public function closeQrcode()
     {
         $uri = '/netpay/bills/close-qrcode';
+        $data['instMid'] = self::QRPAY_INST_MID;
+        $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
     }
 
     /**
      * 账单查询
-     * @param $data
+     * @param string $order_no
+     * @return array
+     * @throws HttpException
+     * @throws InvalidArgumentException
      */
-    public function billsQuery($data)
+    public function billsQuery(array $data): array
     {
         $uri = '/netpay/bills/query';
+        $data['instMid'] = self::QRPAY_INST_MID;
+        $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
+//        $data['billNo'] = $order_no;
+        info([__METHOD__,__LINE__,$uri,$data]);
+        return $this->request($uri,$data);
     }
 
     /**
@@ -56,6 +84,8 @@ class ChinaUmsQrcodeOrder extends BaseOrder
     public function billsRefund()
     {
         $uri = '/netpay/bills/refund' ;
+        $data['instMid'] = self::QRPAY_INST_MID;
+        $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
     }
 
     /**
@@ -65,6 +95,8 @@ class ChinaUmsQrcodeOrder extends BaseOrder
     public function queryQrcodeInfo($data)
     {
         $uri = '/netpay/bills/query-qrcode-info' ;
+        $data['instMid'] = self::QRPAY_INST_MID;
+        $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
     }
 
     /**
@@ -74,16 +106,7 @@ class ChinaUmsQrcodeOrder extends BaseOrder
     public function subOrdersConfirm($datas)
     {
         $uri = '/netpay/sub-orders-confirm';
-    }
-
-
-    /**
-     * 发送请求
-     * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function send(): array
-    {
-       //$this->sendRequest(self::SERVICE_CODE,$data);
+        $data['instMid'] = self::QRPAY_INST_MID;
+        $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
     }
 }
