@@ -41,29 +41,39 @@ class ChinaUmsQrcodeOrder extends BaseOrder
 
     /**
      * 更新二维码
-     * @param $data
+     * @param array $data
+     * @return array
+     * @throws HttpException
+     * @throws InvalidArgumentException
      */
-    public function updateQrcode($data)
+    public function updateQrcode(array $data): array
     {
         $uri = '/netpay/bills/update-qrcode';
         $data['instMid'] = self::QRPAY_INST_MID;
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
-
+        info([__METHOD__,__LINE__,$uri,$data]);
+        return $this->request($uri,$data);
     }
 
     /**
      * 关闭二维码
+     * @param array $data
+     * @return array
+     * @throws HttpException
+     * @throws InvalidArgumentException
      */
-    public function closeQrcode()
+    public function closeQrcode(array $data): array
     {
         $uri = '/netpay/bills/close-qrcode';
         $data['instMid'] = self::QRPAY_INST_MID;
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
+        info([__METHOD__,__LINE__,$uri,$data]);
+        return $this->request($uri,$data);
     }
 
     /**
      * 账单查询
-     * @param string $order_no
+     * @param array $data
      * @return array
      * @throws HttpException
      * @throws InvalidArgumentException
@@ -73,19 +83,25 @@ class ChinaUmsQrcodeOrder extends BaseOrder
         $uri = '/netpay/bills/query';
         $data['instMid'] = self::QRPAY_INST_MID;
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
-//        $data['billNo'] = $order_no;
         info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 
     /**
      * 退款
+     * @param array $data
+     * @return array
+     * @throws HttpException
+     * @throws InvalidArgumentException
      */
-    public function billsRefund()
+    public function billsRefund(array $data): array
     {
         $uri = '/netpay/bills/refund' ;
         $data['instMid'] = self::QRPAY_INST_MID;
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
+        $data['refundOrderId'] = $this->createMerOrderId();
+        info([__METHOD__,__LINE__,$uri,$data]);
+        return $this->request($uri,$data);
     }
 
     /**

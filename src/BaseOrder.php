@@ -61,7 +61,7 @@ class BaseOrder extends ChinaUmsPay
             }
             throw new HttpException($response['errMsg']);
         }
-        throw new HttpException('无效的请求');
+        throw new HttpException("[{$response['errCode']}]: {$response['errMsg']}");
     }
 
     /**
