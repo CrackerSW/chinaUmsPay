@@ -14,6 +14,10 @@ class ChinaUmsPay
 
     use InteractsWithCache;
 
+    const MINI_INST_MID = 'MINIDEFAULT';
+    const APP_INST_MID = 'APPDEFAULT';
+    const QRPAY_INST_MID = 'QRPAYDEFAULT';
+
     protected $guzzleOptions = [];
 
     protected $sign_method = "SHA256";
@@ -67,6 +71,18 @@ class ChinaUmsPay
     {
         $this->guzzleOptions = $options;
         return $this;
+    }
+
+    public static function getInstMid(int $pay_type): string
+    {
+        $instMids = [
+            1 => self::MINI_INST_MID,
+            2 => self::APP_INST_MID,
+            3 => self::APP_INST_MID,
+            4 => self::MINI_INST_MID,
+            5 => self::APP_INST_MID,
+        ];
+        return $instMids[$pay_type] ?? $instMids[1];
     }
 
 
