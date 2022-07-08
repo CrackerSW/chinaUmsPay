@@ -147,7 +147,7 @@ class ChinaUmsPay
      * @throws InvalidArgumentException
      * @throws HttpException
      */
-    protected function getAccessToken()
+    protected function getAccessToken($forceRefreshToken = false)
     {
         $cache = $this->getCache();
         if ($this->debug) {
@@ -156,7 +156,7 @@ class ChinaUmsPay
             $cacheKey = "chinaumspay_token1_" . $this->app_id;  #正式地址
         }
         try {
-            if (!$cache->has($cacheKey)) {
+            if (!$cache->has($cacheKey) || $forceRefreshToken) {
                 $this->refreshAccessToken($cacheKey);
             }
             return $cache->get($cacheKey);
@@ -213,8 +213,19 @@ class ChinaUmsPay
                 ])->getBody()->getContents();
             info([__METHOD__, __LINE__, $response]);
         } catch (GuzzleException $e) {
+            info([__METHOD__, __LINE__, $data,$headers,[$e->getMessage(),$e->getCode()],$e]);
 
-            info([__METHOD__, __LINE__, $data,$headers,$e]);
+            if (strpos($e->getMessage(),'认证失败') !== false) {
+                //token过期 强制刷新
+                try {
+                    $this->getAccessToken(true);
+                    usleep(100000);
+                    $this->sendRequest($uri, $data, $headers, $method);
+                } catch (HttpException | InvalidArgumentException $exception) {
+                    info([__METHOD__, __LINE__, $data,$headers,[$exception->getMessage(),$exception->getCode()],$exception]);
+                    throw new HttpException($exception->getMessage(), $exception->getCode(), $exception);
+                }
+            }
 
             throw new HttpException($e->getMessage(), $e->getCode(), $e);
         }
