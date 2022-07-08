@@ -114,9 +114,7 @@ class BaseOrder extends ChinaUmsPay
             }
             $buff .= $k . "=" . $v . "&";
         }
-
-
-        $verify_sign = hash('sha256',rtrim($buff,'&').$this->md5_key) ;
+        $verify_sign = strtoupper(hash('sha256',rtrim($buff,'&').$this->md5_key));
         info([__METHOD__, __LINE__, $verify_sign, $sign,$data,$this->md5_key,$buff]);
         if ($verify_sign !== $sign) {
             throw new InvalidArgumentException('UMS签名错误',2005);
