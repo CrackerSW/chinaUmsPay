@@ -107,7 +107,7 @@ class BaseOrder extends ChinaUmsPay
         ksort($data);
         //reset()内部指针指向数组中的第⼀个元素
         reset($data);
-
+        $buff = '';
         foreach ($data as $k => $v) {
             if (is_array($v)) {
                 $v = json_encode($v,JSON_UNESCAPED_UNICODE);
