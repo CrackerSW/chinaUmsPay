@@ -77,7 +77,8 @@ class ChinaUmsOrder extends BaseOrder
      */
     public function createAliAppOrder($data): array
     {
-        $uri = '/netpay/trade/precreate';
+//        $uri = '/netpay/trade/precreate';
+        $uri = '/netpay/trade/app-pre-order';
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
         $data['merOrderId'] = $this->createMerOrderId();
         $data['instMid'] = self::getInstMid(3);
