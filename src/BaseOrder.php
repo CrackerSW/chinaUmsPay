@@ -37,7 +37,7 @@ class BaseOrder extends ChinaUmsPay
         }
         $this->data['tid'] = $this->tid;
         $this->data['mid'] = $this->mid;
-        $this->data['instMid'] = $this->inst_mid;
+//        $this->data['instMid'] = $this->inst_mid;
         $this->data['msgSrcId'] = $this->msg_src_id;
     }
 

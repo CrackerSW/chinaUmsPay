@@ -117,12 +117,16 @@ class ChinaUmsQrcodeOrder extends BaseOrder
 
     /**
      * 异步分账确认
-     * @param $datas
+     * @param array $data
+     * @return array
+     * @throws HttpException
+     * @throws InvalidArgumentException
      */
-    public function subOrdersConfirm($datas)
+    public function subOrdersConfirm(array $data):array
     {
         $uri = '/netpay/sub-orders-confirm';
-        $data['instMid'] = self::QRPAY_INST_MID;
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
+        info([__METHOD__,__LINE__,$uri,$data]);
+        return $this->request($uri,$data);
     }
 }
