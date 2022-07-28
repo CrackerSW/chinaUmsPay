@@ -56,10 +56,7 @@ class BaseOrder extends ChinaUmsPay
     public function getResult($response): array
     {
         if ($response && $response['errCode'] === "SUCCESS") {
-            if ($response['errCode'] === "SUCCESS") {
-                return $response;
-            }
-            throw new HttpException($response['errMsg']);
+            return $response;
         }
         throw new HttpException("[{$response['errCode']}]: {$response['errMsg']}");
     }
