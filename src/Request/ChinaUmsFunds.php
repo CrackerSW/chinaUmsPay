@@ -1,8 +1,7 @@
 <?php
 
 
-namespace App\Services;
-
+namespace CrackerSw\ChinaUmsPay\Request;
 
 use Illuminate\Support\Facades\Http;
 use CrackerSw\ChinaUmsPay\Exceptions\InvalidArgumentException;
