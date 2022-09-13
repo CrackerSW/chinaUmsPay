@@ -67,6 +67,9 @@ class ChinaUmsFunds
     protected $mid;
     protected $group_id;
     protected $error_message;
+    protected $verNo = "100";
+    protected $channelId = "043";
+    protected $card_no_algo = "sha256";
 
     public function __construct(array $config)
     {
@@ -127,7 +130,7 @@ class ChinaUmsFunds
      */
     public function transcodeSplitByJournal($data)
     {
-        $data['cardNo'] = hash('sha256',$data['cardNo']);
+        $data['cardNo'] = hash($this->card_no_algo,$data['cardNo']);
         $header = $this->getHeader(self::TRANSCODE_SPLIT_BY_JOURNAL);
         $post_data = array_merge($header, $data);
         info([__METHOD__, __LINE__,$post_data]);
@@ -154,16 +157,15 @@ class ChinaUmsFunds
         return $this->sendRequest($post_data);
     }
 
-    private function sendRequest($data)
+    private function sendRequest($data): array
     {
-        $string = $this->getParamsString($data);
-        $signature = $this->sign($string);
+        $signature = $this->sign($data);
         $data['signature'] = $signature;
         $url = $this->url . $data['transCode'];
         info([__METHOD__, __LINE__, $url,$data]);
         $result = Http::withHeaders([
             "Content-type" =>"application/json"
-        ])->post($url, $data)->throw();
+        ])->post($url, $data)->throw()->json();
 
         return $result;
     }
@@ -179,11 +181,11 @@ class ChinaUmsFunds
     {
         return [
             'transCode' => $transCode,
-            'verNo' => "100",
+            'verNo' => $this->verNo,
             'srcReqDate' => now()->format('Ymd'),
             'srcReqTime' => now()->format('His'),
             'srcReqId' => self::generateUniqueNumber(),
-            'channelId' => "043",
+            'channelId' => $this->channelId,
         ];
     }
 
@@ -264,6 +266,7 @@ class ChinaUmsFunds
      */
     public function sign($data)
     {
+        $data = $this->getParamsString($data);
         $privateKey = $this->getPrivateKey();
         info([__METHOD__,$privateKey]);
         if (openssl_sign(utf8_encode($data), $binarySignature, $privateKey, OPENSSL_ALGO_SHA256)) {
