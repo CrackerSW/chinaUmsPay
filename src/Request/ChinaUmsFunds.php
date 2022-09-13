@@ -1,7 +1,8 @@
 <?php
 
 
-namespace CrackerSw\ChinaUmsPay\Request;
+namespace App\Services;
+
 
 use Illuminate\Support\Facades\Http;
 use CrackerSw\ChinaUmsPay\Exceptions\InvalidArgumentException;
@@ -60,16 +61,17 @@ class ChinaUmsFunds
     const TRANSCODE_BATCH_QUERY = "202012";//订单批量查询
     const TRANSCODE_TRANSFER_CHECK = "202013";//转款校验
 
+    public $error_message;
 
     protected $url;
     protected $debug = false;
     protected $tid;
     protected $mid;
     protected $group_id;
-    protected $error_message;
-    protected $verNo = "100";
-    protected $channelId = "043";
-    protected $card_no_algo = "sha256";
+
+    protected $private_key;
+    protected $private_key_password;
+    protected $public_key;
 
     public function __construct(array $config)
     {
@@ -77,6 +79,9 @@ class ChinaUmsFunds
         $this->tid = $config['tid'] ?? $this->tid;
         $this->mid = $config['mid'] ?? $this->mid;
         $this->group_id = $config['group_id'] ?? $this->group_id;
+        $this->private_key = $config['private_key'] ?? $this->private_key;
+        $this->private_key_password = $config['private_key_password'] ?? $this->private_key_password;
+        $this->public_key = $config['public_key'] ?? $this->public_key;
         if ($this->debug) {
             $this->url = "https://mobl-test.chinaums.com/channel/Business/UnifyMulti/"; #测试地址
         } else {
@@ -130,7 +135,7 @@ class ChinaUmsFunds
      */
     public function transcodeSplitByJournal($data)
     {
-        $data['cardNo'] = hash($this->card_no_algo,$data['cardNo']);
+        $data['cardNo'] = hash('sha256',$data['cardNo']);
         $header = $this->getHeader(self::TRANSCODE_SPLIT_BY_JOURNAL);
         $post_data = array_merge($header, $data);
         info([__METHOD__, __LINE__,$post_data]);
@@ -157,15 +162,16 @@ class ChinaUmsFunds
         return $this->sendRequest($post_data);
     }
 
-    private function sendRequest($data): array
+    private function sendRequest($data)
     {
-        $signature = $this->sign($data);
+        $string = $this->getParamsString($data);
+        $signature = $this->sign($string);
         $data['signature'] = $signature;
         $url = $this->url . $data['transCode'];
         info([__METHOD__, __LINE__, $url,$data]);
         $result = Http::withHeaders([
             "Content-type" =>"application/json"
-        ])->post($url, $data)->throw()->json();
+        ])->post($url, $data)->throw();
 
         return $result;
     }
@@ -181,11 +187,11 @@ class ChinaUmsFunds
     {
         return [
             'transCode' => $transCode,
-            'verNo' => $this->verNo,
+            'verNo' => "100",
             'srcReqDate' => now()->format('Ymd'),
             'srcReqTime' => now()->format('His'),
             'srcReqId' => self::generateUniqueNumber(),
-            'channelId' => $this->channelId,
+            'channelId' => "043",
         ];
     }
 
@@ -266,7 +272,6 @@ class ChinaUmsFunds
      */
     public function sign($data)
     {
-        $data = $this->getParamsString($data);
         $privateKey = $this->getPrivateKey();
         info([__METHOD__,$privateKey]);
         if (openssl_sign(utf8_encode($data), $binarySignature, $privateKey, OPENSSL_ALGO_SHA256)) {
@@ -289,7 +294,6 @@ class ChinaUmsFunds
     public function verifyRespondSign($data, string $signature): bool
     {
         $pubKeyId = $this->getPublicKey();
-
         $signature = hex2bin($signature);
         $ok = openssl_verify($data, $signature, $pubKeyId, OPENSSL_ALGO_SHA256);
 
@@ -302,16 +306,14 @@ class ChinaUmsFunds
 
     private function getPrivateKey(): string
     {
-        $filePath = config('param.private_key',storage_path('cert/ums/rsa_private_dev.pfx'));
+        $filePath = $this->private_key;
         if (!file_exists($filePath)) {
             $this->error_message = 'private_key not exit';
             throw new InvalidArgumentException($this->error_message);
         }
 
-        $password = config('param.private_key_pwd','123456');
-
         $pkcs12 = file_get_contents($filePath);
-        openssl_pkcs12_read($pkcs12, $certs, $password);
+        openssl_pkcs12_read($pkcs12, $certs, $this->private_key_password);
         if (!$certs || !$certs['pkey']) {
             $this->error_message = 'certs not exit';
             throw new InvalidArgumentException($this->error_message);
@@ -322,7 +324,7 @@ class ChinaUmsFunds
 
     private function getPublicKey()
     {
-        $filePath = config('param.public_key',storage_path('cert/ums/rsa_public_dev.cer'));
+        $filePath = $this->public_key;
         if (!file_exists($filePath)) {
             $this->error_message = '公钥文件不存在';
             throw new InvalidArgumentException($this->error_message);

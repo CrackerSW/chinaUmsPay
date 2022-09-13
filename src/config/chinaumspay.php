@@ -20,5 +20,8 @@ return [
         'sub_order' => env('YS_SUB_ORDER', ''),
         'sub_mer_no' => env('YS_SUB_MER_NO', ''),
         'group_id' => env('YS_GROUP_ID', ''),
+        'private_key' => env('YS_PRIVATE_KEY',storage_path('cert/ums/rsa_private_dev.pfx')),
+        'private_key_password' => env('YS_PRIVATE_KEY_PASSWORD',''),
+        'public_key' => env('YS_PUBLIC_KEY',storage_path('cert/ums/rsa_public_dev.pfx')),
     ],
 ];
