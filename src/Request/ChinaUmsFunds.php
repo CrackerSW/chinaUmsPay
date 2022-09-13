@@ -9,8 +9,6 @@ use CrackerSw\ChinaUmsPay\Exceptions\InvalidArgumentException;
 
 class ChinaUmsFunds
 {
-    protected $message = '';
-
     /**
      * transCode： 202001
      *          param：merNo merOrderNo payAmt ps
@@ -68,6 +66,9 @@ class ChinaUmsFunds
     protected $tid;
     protected $mid;
     protected $group_id;
+    protected $verNo = "100";
+    protected $channelId = "043";
+    protected $card_no_algo = "sha256";
 
     protected $private_key;
     protected $private_key_password;
@@ -135,7 +136,7 @@ class ChinaUmsFunds
      */
     public function transcodeSplitByJournal($data)
     {
-        $data['cardNo'] = hash('sha256',$data['cardNo']);
+        $data['cardNo'] = hash($this->card_no_algo,$data['cardNo']);
         $header = $this->getHeader(self::TRANSCODE_SPLIT_BY_JOURNAL);
         $post_data = array_merge($header, $data);
         info([__METHOD__, __LINE__,$post_data]);
@@ -164,8 +165,7 @@ class ChinaUmsFunds
 
     private function sendRequest($data)
     {
-        $string = $this->getParamsString($data);
-        $signature = $this->sign($string);
+        $signature = $this->sign($data);
         $data['signature'] = $signature;
         $url = $this->url . $data['transCode'];
         info([__METHOD__, __LINE__, $url,$data]);
@@ -187,11 +187,11 @@ class ChinaUmsFunds
     {
         return [
             'transCode' => $transCode,
-            'verNo' => "100",
+            'verNo' => $this->verNo,
             'srcReqDate' => now()->format('Ymd'),
             'srcReqTime' => now()->format('His'),
             'srcReqId' => self::generateUniqueNumber(),
-            'channelId' => "043",
+            'channelId' => $this->channelId,
         ];
     }
 
@@ -272,6 +272,7 @@ class ChinaUmsFunds
      */
     public function sign($data)
     {
+        $data = $this->getParamsString($data);
         $privateKey = $this->getPrivateKey();
         info([__METHOD__,$privateKey]);
         if (openssl_sign(utf8_encode($data), $binarySignature, $privateKey, OPENSSL_ALGO_SHA256)) {
