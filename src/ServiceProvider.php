@@ -14,6 +14,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $provides  = [
             'china_ums_qrc_order' => ChinaUmsQrcodeOrder::class,
             'china_ums_order' => ChinaUmsOrder::class,
+            'china_ums_funds' => ChinaUmsFunds::class,
         ];
         foreach ($provides as $name => $provide) {
             $this->app->singleton($provide,function () use($provide) {
