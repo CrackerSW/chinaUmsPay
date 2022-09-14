@@ -123,7 +123,7 @@ class ChinaUmsFunds
      */
     public function transcodePayByJournal($data)
     {
-        $data['groupId'] = $this->group_id;
+//        $data['groupId'] = $this->group_id;
         $header = $this->getHeader(self::TRANSCODE_PAY_BY_JOURNAL);
         $post_data = array_merge($header, $data);
         info([__METHOD__, __LINE__,$post_data]);
@@ -204,6 +204,7 @@ class ChinaUmsFunds
             'srcReqTime' => now()->format('His'),
             'srcReqId' => self::generateUniqueNumber(),
             'channelId' => $this->channelId,
+            'groupId' => $this->group_id
         ];
     }
 
