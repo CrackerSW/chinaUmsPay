@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Services;
+namespace CrackerSw\ChinaUmsPay\Request;
 
 
 use Illuminate\Support\Facades\Http;
