@@ -132,6 +132,18 @@ class ChinaUmsFunds
 
     /**
      * ex :
+     * 202006 :transcodeInfoQuery
+     */
+    public function transcodeInfoQuery($data)
+    {
+        $header = $this->getHeader(self::TRANSCODE_INFO_QUERY);
+        $post_data = array_merge($header, $data);
+        info([__METHOD__, __LINE__,$post_data]);
+        return $this->sendRequest($post_data);
+    }
+
+    /**
+     * ex :
      * 202006 :query merno info
      */
     public function transcodeSplitByJournal($data)
