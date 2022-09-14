@@ -4,6 +4,7 @@
 namespace CrackerSw\ChinaUmsPay;
 
 
+use CrackerSw\ChinaUmsPay\Request\ChinaUmsFunds;
 use CrackerSw\ChinaUmsPay\Request\ChinaUmsOrder;
 use CrackerSw\ChinaUmsPay\Request\ChinaUmsQrcodeOrder;
 
