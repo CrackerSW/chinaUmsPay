@@ -144,7 +144,7 @@ class ChinaUmsFunds
 
     /**
      * ex :
-     * 202006 :query merno info
+     * 202003 :query merno info
      */
     public function transcodeSplitByJournal($data)
     {
@@ -163,12 +163,10 @@ class ChinaUmsFunds
         return $this->sendRequest($post_data);
     }
 
-    public function transcodeJournalQuery()
+    //202008
+    public function transcodeJournalQuery($data)
     {
 //       merNo reqDate reqJournalNo
-        $data['merNo'] = '10000000014000';
-        $data['reqDate'] = now()->format('Ymd');
-        $data['reqJournalNo'] = 'AAAA0001';
         $header = $this->getHeader(self::TRANSCODE_JOURNAL_QUERY);
         $post_data = array_merge($header, $data);
         info([__METHOD__, __LINE__,$post_data]);
@@ -296,7 +294,6 @@ class ChinaUmsFunds
         throw new InvalidArgumentException($this->error_message);
     }
 
-
     /**
      * verifyRespondSign
      * @filePath cer fiie path
@@ -305,11 +302,14 @@ class ChinaUmsFunds
      *
      * @return bool
      */
-    public function verifyRespondSign($data, string $signature): bool
+    public function verifyRespondSign($data): bool
     {
+        $signature = $data['signature'];
+        unset($data['signature']);
+        $string = $this->getParamsString($data);
         $pubKeyId = $this->getPublicKey();
         $signature = hex2bin($signature);
-        $ok = openssl_verify($data, $signature, $pubKeyId, OPENSSL_ALGO_SHA256);
+        $ok = openssl_verify($string, $signature, $pubKeyId, OPENSSL_ALGO_SHA256);
 
         if ($ok == 1) {
             openssl_free_key($pubKeyId);
