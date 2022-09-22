@@ -187,7 +187,7 @@ class ChinaUmsPay
         ];
 
         $response = $this->sendRequest("/token/access", $data);
-        info([__METHOD__, __LINE__, $response, $data]);
+//        info([__METHOD__, __LINE__, $response, $data]);
 
         if ($response['errCode'] !== '0000') {
             throw new InvalidArgumentException($response['errInfo'], $response['errCode']);
@@ -211,9 +211,9 @@ class ChinaUmsPay
                 ->request($method, $url, [
                     'json' => $data
                 ])->getBody()->getContents();
-            info([__METHOD__, __LINE__, $response]);
+//            info([__METHOD__, __LINE__, $response]);
         } catch (GuzzleException $e) {
-            info([__METHOD__, __LINE__, $data,$headers,[$e->getMessage(),$e->getCode()],$e]);
+//            info([__METHOD__, __LINE__, $data,$headers,[$e->getMessage(),$e->getCode()],$e]);
 
             if (strpos($e->getMessage(),'认证失败') !== false) {
                 //token过期 强制刷新
@@ -222,7 +222,7 @@ class ChinaUmsPay
                     usleep(100000);
                     $this->sendRequest($uri, $data, $headers, $method);
                 } catch (HttpException | InvalidArgumentException $exception) {
-                    info([__METHOD__, __LINE__, $data,$headers,[$exception->getMessage(),$exception->getCode()],$exception]);
+//                    info([__METHOD__, __LINE__, $data,$headers,[$exception->getMessage(),$exception->getCode()],$exception]);
                     throw new HttpException($exception->getMessage(), $exception->getCode(), $exception);
                 }
             }

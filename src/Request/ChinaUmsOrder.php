@@ -21,7 +21,7 @@ class ChinaUmsOrder extends BaseOrder
     public function createUnifiedOrder($data): array
     {
         $uri = '/netpay/wx/unified-order';
-        info([__METHOD__,__LINE__,$uri,$data]);
+//        info([__METHOD__,__LINE__,$uri,$data]);
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
         $data['merOrderId'] = $this->createMerOrderId();
         $data['tradeType'] = 'MINI';
@@ -43,7 +43,7 @@ class ChinaUmsOrder extends BaseOrder
         $data['merOrderId'] = $this->createMerOrderId();
         $data['tradeType'] = 'APP';
         $data['instMid'] = self::getInstMid(2);
-        info([__METHOD__,__LINE__,$uri,$data]);
+//        info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 
@@ -82,7 +82,7 @@ class ChinaUmsOrder extends BaseOrder
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
         $data['merOrderId'] = $this->createMerOrderId();
         $data['instMid'] = self::getInstMid(3);
-        info([__METHOD__,__LINE__,$uri,$data]);
+//        info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 
@@ -100,7 +100,7 @@ class ChinaUmsOrder extends BaseOrder
         $data['merOrderId'] = $this->createMerOrderId();
         $data['tradeType'] = 'MINI';
         $data['instMid'] = self::getInstMid(4);
-        info([__METHOD__,__LINE__,$uri,$data]);
+//        info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 
@@ -117,7 +117,7 @@ class ChinaUmsOrder extends BaseOrder
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
         $data['merOrderId'] = $this->createMerOrderId();
         $data['instMid'] = self::getInstMid(5);
-        info([__METHOD__,__LINE__,$uri,$data]);
+//        info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 
@@ -154,7 +154,7 @@ class ChinaUmsOrder extends BaseOrder
         $uri = '/netpay/query';
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
 //        $data['merOrderId'] = $order_no;
-        info([__METHOD__,__LINE__,$uri,$data]);
+//        info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 
@@ -170,7 +170,7 @@ class ChinaUmsOrder extends BaseOrder
         $uri = '/netpay/refund' ;
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
         $data['refundOrderId'] = $this->createMerOrderId();
-        info([__METHOD__,__LINE__,$uri,$data]);
+//        info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 
@@ -186,7 +186,7 @@ class ChinaUmsOrder extends BaseOrder
         $uri = '/netpay/refund-query';
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
 //        $data['merOrderId'] = $order_no;
-        info([__METHOD__,__LINE__,$uri,$data]);
+//        info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 
@@ -198,7 +198,7 @@ class ChinaUmsOrder extends BaseOrder
         $uri = '/netpay/close';
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
         $data['merOrderId'] = $order_no;
-        info([__METHOD__,__LINE__,$uri,$data]);
+//        info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 
@@ -213,7 +213,7 @@ class ChinaUmsOrder extends BaseOrder
     {
         $uri = '/netpay/sub-orders-confirm';
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
-        info([__METHOD__,__LINE__,$uri,$data]);
+//        info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 }

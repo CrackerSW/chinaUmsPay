@@ -126,7 +126,7 @@ class ChinaUmsFunds
 //        $data['groupId'] = $this->group_id;
         $header = $this->getHeader(self::TRANSCODE_PAY_BY_JOURNAL);
         $post_data = array_merge($header, $data);
-        info([__METHOD__, __LINE__,$post_data]);
+//        info([__METHOD__, __LINE__,$post_data]);
         return $this->sendRequest($post_data);
     }
 
@@ -138,7 +138,7 @@ class ChinaUmsFunds
     {
         $header = $this->getHeader(self::TRANSCODE_INFO_QUERY);
         $post_data = array_merge($header, $data);
-        info([__METHOD__, __LINE__,$post_data]);
+//        info([__METHOD__, __LINE__,$post_data]);
         return $this->sendRequest($post_data);
     }
 
@@ -151,7 +151,7 @@ class ChinaUmsFunds
         $data['cardNo'] = hash($this->card_no_algo,$data['cardNo']);
         $header = $this->getHeader(self::TRANSCODE_SPLIT_BY_JOURNAL);
         $post_data = array_merge($header, $data);
-        info([__METHOD__, __LINE__,$post_data]);
+//        info([__METHOD__, __LINE__,$post_data]);
         return $this->sendRequest($post_data);
     }
 
@@ -159,7 +159,7 @@ class ChinaUmsFunds
     {
         $header = $this->getHeader(self::TRANSCODE_DETAIL_QUERY);
         $post_data = array_merge($header, $data);
-        info([__METHOD__, __LINE__,$post_data]);
+//        info([__METHOD__, __LINE__,$post_data]);
         return $this->sendRequest($post_data);
     }
 
@@ -169,7 +169,7 @@ class ChinaUmsFunds
 //       merNo reqDate reqJournalNo
         $header = $this->getHeader(self::TRANSCODE_JOURNAL_QUERY);
         $post_data = array_merge($header, $data);
-        info([__METHOD__, __LINE__,$post_data]);
+//        info([__METHOD__, __LINE__,$post_data]);
         return $this->sendRequest($post_data);
     }
 
@@ -178,7 +178,7 @@ class ChinaUmsFunds
         $signature = $this->sign($data);
         $data['signature'] = $signature;
         $url = $this->url . $data['transCode'];
-        info([__METHOD__, __LINE__, $url,$data]);
+//        info([__METHOD__, __LINE__, $url,$data]);
         $result = Http::withHeaders([
             "Content-type" =>"application/json"
         ])->post($url, $data)->throw();
@@ -285,7 +285,7 @@ class ChinaUmsFunds
     {
         $data = $this->getParamsString($data);
         $privateKey = $this->getPrivateKey();
-        info([__METHOD__,$privateKey]);
+//        info([__METHOD__,$privateKey]);
         if (openssl_sign(utf8_encode($data), $binarySignature, $privateKey, OPENSSL_ALGO_SHA256)) {
             return bin2hex($binarySignature);
         }

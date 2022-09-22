@@ -35,7 +35,7 @@ class ChinaUmsQrcodeOrder extends BaseOrder
         $data['billDate'] = now()->format('Y-m-d H:i:s');
         $data['instMid'] = self::QRPAY_INST_MID;
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
-        info([__METHOD__,__LINE__,$uri,$data]);
+        //info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 
@@ -51,7 +51,7 @@ class ChinaUmsQrcodeOrder extends BaseOrder
         $uri = '/netpay/bills/update-qrcode';
         $data['instMid'] = self::QRPAY_INST_MID;
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
-        info([__METHOD__,__LINE__,$uri,$data]);
+        //info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 
@@ -67,7 +67,7 @@ class ChinaUmsQrcodeOrder extends BaseOrder
         $uri = '/netpay/bills/close-qrcode';
         $data['instMid'] = self::QRPAY_INST_MID;
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
-        info([__METHOD__,__LINE__,$uri,$data]);
+        //info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 
@@ -83,7 +83,7 @@ class ChinaUmsQrcodeOrder extends BaseOrder
         $uri = '/netpay/bills/query';
         $data['instMid'] = self::QRPAY_INST_MID;
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
-        info([__METHOD__,__LINE__,$uri,$data]);
+        //info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 
@@ -100,7 +100,7 @@ class ChinaUmsQrcodeOrder extends BaseOrder
         $data['instMid'] = self::QRPAY_INST_MID;
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
         $data['refundOrderId'] = $this->createMerOrderId();
-        info([__METHOD__,__LINE__,$uri,$data]);
+        //info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 
@@ -126,7 +126,7 @@ class ChinaUmsQrcodeOrder extends BaseOrder
     {
         $uri = '/netpay/sub-orders-confirm';
         $data['requestTimestamp'] = now()->format('Y-m-d H:i:s');
-        info([__METHOD__,__LINE__,$uri,$data]);
+        //info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
 }

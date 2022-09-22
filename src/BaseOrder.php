@@ -87,7 +87,7 @@ class BaseOrder extends ChinaUmsPay
             $data = ['data' => $data];
         }
 
-        info([__METHOD__, __LINE__, $uri, $data, $this->headers]);
+//        info([__METHOD__, __LINE__, $uri, $data, $this->headers]);
         $response = $this->sendRequest($uri, $data, ['headers' => $this->headers], $method);
         return $this->getResult($response);
     }
@@ -112,7 +112,7 @@ class BaseOrder extends ChinaUmsPay
             $buff .= $k . "=" . $v . "&";
         }
         $verify_sign = strtoupper(hash('sha256',rtrim($buff,'&').$this->md5_key));
-        info([__METHOD__, __LINE__, $verify_sign, $sign,$data,$this->md5_key,$buff]);
+//        info([__METHOD__, __LINE__, $verify_sign, $sign,$data,$this->md5_key,$buff]);
         if ($verify_sign !== $sign) {
             throw new InvalidArgumentException('UMS签名错误',2005);
         }
