@@ -221,13 +221,19 @@ class ChinaUmsPay
                     $this->getAccessToken(true);
 /*                    usleep(100000);
                     $this->sendRequest($uri, $data, $headers, $method);*/
+                    $response = $this->setGuzzleOptions($headers)
+                        ->getHttpClient()
+                        ->request($method, $url, [
+                            'json' => $data
+                        ])->getBody()->getContents();
                 } catch (HttpException | InvalidArgumentException $exception) {
 //                    info([__METHOD__, __LINE__, $data,$headers,[$exception->getMessage(),$exception->getCode()],$exception]);
                     throw new HttpException($exception->getMessage(), $exception->getCode(), $exception);
                 }
+            } else {
+                throw new HttpException($e->getMessage(), $e->getCode(), $e);
             }
 
-            throw new HttpException($e->getMessage(), $e->getCode(), $e);
         }
         return json_decode($response, true) ?: [];
     }
