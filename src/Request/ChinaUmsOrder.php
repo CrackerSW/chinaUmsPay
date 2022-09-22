@@ -216,4 +216,9 @@ class ChinaUmsOrder extends BaseOrder
 //        info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
+
+    public function getToken()
+    {
+        return $this->token;
+    }
 }
