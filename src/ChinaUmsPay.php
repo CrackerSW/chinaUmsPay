@@ -219,8 +219,8 @@ class ChinaUmsPay
                 //token过期 强制刷新
                 try {
                     $this->getAccessToken(true);
-                    usleep(100000);
-                    $this->sendRequest($uri, $data, $headers, $method);
+/*                    usleep(100000);
+                    $this->sendRequest($uri, $data, $headers, $method);*/
                 } catch (HttpException | InvalidArgumentException $exception) {
 //                    info([__METHOD__, __LINE__, $data,$headers,[$exception->getMessage(),$exception->getCode()],$exception]);
                     throw new HttpException($exception->getMessage(), $exception->getCode(), $exception);
