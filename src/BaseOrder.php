@@ -31,10 +31,6 @@ class BaseOrder extends ChinaUmsPay
      */
     public function _initialize(): void
     {
-        if ($this->need_token) {
-            $this->token = $this->getAccessToken();
-            $this->headers['Authorization'] = 'OPEN-ACCESS-TOKEN AccessToken=' . $this->token;
-        }
         $this->data['tid'] = $this->tid;
         $this->data['mid'] = $this->mid;
 //        $this->data['instMid'] = $this->inst_mid;
@@ -87,7 +83,15 @@ class BaseOrder extends ChinaUmsPay
             $data = ['data' => $data];
         }
 
-//        info([__METHOD__, __LINE__, $uri, $data, $this->headers]);
+        /*if ($this->need_token) {
+            $this->token = $this->getAccessToken();
+            $this->headers['Authorization'] = 'OPEN-ACCESS-TOKEN AccessToken=' . $this->token;
+        } else {*/
+            $body=json_encode($data);
+            $this->headers['Authorization'] = $this->getOpenBodySig($body);
+//        }
+
+        info([__METHOD__, __LINE__, $uri, $data, $this->headers]);
         $response = $this->sendRequest($uri, $data, ['headers' => $this->headers], $method);
         return $this->getResult($response);
     }

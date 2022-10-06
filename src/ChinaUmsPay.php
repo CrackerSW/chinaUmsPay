@@ -161,8 +161,21 @@ class ChinaUmsPay
             }
             return $cache->get($cacheKey);
         } catch (\Psr\SimpleCache\InvalidArgumentException $exception) {
-            throw new InvalidArgumentException($exception->getMessage(), $exception->getCode(),$exception);
+            throw new InvalidArgumentException($exception->getMessage(), $exception->getCode(), $exception);
         }
+    }
+
+    protected function getOpenBodySig($body)
+    {
+        $appid = $this->app_id;
+        $appkey = $this->app_key;
+        $timestamp = date("YmdHis", time());
+        $nonce = md5(uniqid(microtime(true), true));
+        $str = bin2hex(hash('sha256', $body, true));
+
+        $signature = base64_encode(hash_hmac('sha256', "$appid$timestamp$nonce$str", $appkey, true));
+        return "OPEN-BODY-SIG AppId=\"$appid\", Timestamp=\"$timestamp\", Nonce=\"$nonce\", Signature=\"$signature\"";
+
     }
 
     /**
@@ -170,7 +183,7 @@ class ChinaUmsPay
      * @throws HttpException
      * @throws InvalidArgumentException
      */
-    private function refreshAccessToken(string$cacheKey): void
+    private function refreshAccessToken(string $cacheKey): void
     {
         if (!$this->app_id || !$this->app_key) {
             throw new InvalidArgumentException('appId and appKey is not empty!');
@@ -195,14 +208,14 @@ class ChinaUmsPay
         try {
             $cache->set($cacheKey, $response['accessToken'], 3300);
         } catch (\Psr\SimpleCache\InvalidArgumentException $e) {
-            throw new InvalidArgumentException($e->getMessage(), $e->getCode(),$e);
+            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
     /**
      * @throws HttpException
      */
-    protected function sendRequest($uri, $data, $headers = [], $method = 'POST') : array
+    protected function sendRequest($uri, $data, $headers = [], $method = 'POST'): array
     {
         $url = $this->url . $uri;
         try {
@@ -213,26 +226,33 @@ class ChinaUmsPay
                 ])->getBody()->getContents();
 //            info([__METHOD__, __LINE__, $response]);
         } catch (GuzzleException $e) {
-//            info([__METHOD__, __LINE__, $data,$headers,[$e->getMessage(),$e->getCode()],$e]);
+            info([__METHOD__, __LINE__, $data,$headers,[$e->getMessage(),$e->getCode()],$e]);
 
-            if (strpos($e->getMessage(),'认证失败') !== false) {
-                //token过期 强制刷新
-                try {
-                    $this->getAccessToken(true);
-/*                    usleep(100000);
-                    $this->sendRequest($uri, $data, $headers, $method);*/
-                    $response = $this->setGuzzleOptions($headers)
-                        ->getHttpClient()
-                        ->request($method, $url, [
-                            'json' => $data
-                        ])->getBody()->getContents();
-                } catch (HttpException | InvalidArgumentException $exception) {
-//                    info([__METHOD__, __LINE__, $data,$headers,[$exception->getMessage(),$exception->getCode()],$exception]);
-                    throw new HttpException($exception->getMessage(), $exception->getCode(), $exception);
-                }
-            } else {
+//            if (strpos($e->getMessage(), '认证失败') !== false) {
+//                //token过期 强制刷新
+//                try {
+//                    if ($this->need_token) {
+//                        $this->token = $this->getAccessToken(true);
+//                        $this->headers['Authorization'] = 'OPEN-ACCESS-TOKEN AccessToken=' . $this->token;
+//                    } else {
+//                        $body=json_encode($data);
+//                        $this->headers['Authorization'] = $this->getOpenBodySig($body);
+//                    }
+//
+//                    /*                    usleep(100000);
+//                                        $this->sendRequest($uri, $data, $headers, $method);*/
+//                    $response = $this->setGuzzleOptions(['headers' => $this->headers])
+//                        ->getHttpClient()
+//                        ->request($method, $url, [
+//                            'json' => $data
+//                        ])->getBody()->getContents();
+//                } catch (HttpException | InvalidArgumentException $exception) {
+////                    info([__METHOD__, __LINE__, $data,$headers,[$exception->getMessage(),$exception->getCode()],$exception]);
+//                    throw new HttpException($exception->getMessage(), $exception->getCode(), $exception);
+//                }
+//            } else {
                 throw new HttpException($e->getMessage(), $e->getCode(), $e);
-            }
+//            }
 
         }
         return json_decode($response, true) ?: [];
