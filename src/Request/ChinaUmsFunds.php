@@ -130,6 +130,20 @@ class ChinaUmsFunds
         return $this->sendRequest($post_data);
     }
 
+
+    /**
+     * ex :
+     * 202002 :transcodePayByMoney
+     */
+    public function transcodePayByMoney($data)
+    {
+//        $data['groupId'] = $this->group_id;
+        $header = $this->getHeader(self::TRANSCODE_PAY_BY_MONEY);
+        $post_data = array_merge($header, $data);
+        info([__METHOD__, __LINE__,$post_data]);
+        return $this->sendRequest($post_data);
+    }
+
     /**
      * ex :
      * 202006 :transcodeInfoQuery
