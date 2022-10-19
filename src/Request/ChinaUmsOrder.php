@@ -25,7 +25,7 @@ class ChinaUmsOrder extends BaseOrder
         $data['merOrderId'] = $this->createMerOrderId();
         $data['tradeType'] = 'MINI';
         $data['instMid'] = self::getInstMid(1);
-        info([__METHOD__,__LINE__,date_default_timezone_get(),$data]);
+        info([__METHOD__,__LINE__,date_default_timezone_get(),date('Y-m-d H:i:s'),$data]);
         return $this->request($uri,$data);
     }
 
@@ -43,7 +43,7 @@ class ChinaUmsOrder extends BaseOrder
         $data['merOrderId'] = $this->createMerOrderId();
         $data['tradeType'] = 'APP';
         $data['instMid'] = self::getInstMid(2);
-        info([__METHOD__,__LINE__,date_default_timezone_get(),$data]);
+        info([__METHOD__,__LINE__,date_default_timezone_get(),date('Y-m-d H:i:s'),$data]);
         return $this->request($uri,$data);
     }
 
@@ -82,7 +82,7 @@ class ChinaUmsOrder extends BaseOrder
         $data['requestTimestamp'] = date('Y-m-d H:i:s');
         $data['merOrderId'] = $this->createMerOrderId();
         $data['instMid'] = self::getInstMid(3);
-        info([__METHOD__,__LINE__,date_default_timezone_get(),$data]);
+        info([__METHOD__,__LINE__,date_default_timezone_get(),date('Y-m-d H:i:s'),$data]);
         return $this->request($uri,$data);
     }
 
@@ -100,7 +100,7 @@ class ChinaUmsOrder extends BaseOrder
         $data['merOrderId'] = $this->createMerOrderId();
         $data['tradeType'] = 'MINI';
         $data['instMid'] = self::getInstMid(4);
-        info([__METHOD__,__LINE__,date_default_timezone_get(),$data]);
+        info([__METHOD__,__LINE__,date_default_timezone_get(),date('Y-m-d H:i:s'),$data]);
         return $this->request($uri,$data);
     }
 
@@ -117,7 +117,7 @@ class ChinaUmsOrder extends BaseOrder
         $data['requestTimestamp'] = date('Y-m-d H:i:s');
         $data['merOrderId'] = $this->createMerOrderId();
         $data['instMid'] = self::getInstMid(5);
-        info([__METHOD__,__LINE__,date_default_timezone_get(),$data]);
+        info([__METHOD__,__LINE__,date_default_timezone_get(),date('Y-m-d H:i:s'),$data]);
         return $this->request($uri,$data);
     }
 
@@ -154,7 +154,7 @@ class ChinaUmsOrder extends BaseOrder
         $uri = '/netpay/query';
         $data['requestTimestamp'] = date('Y-m-d H:i:s');
 //        $data['merOrderId'] = $order_no;
-        info([__METHOD__,__LINE__,date_default_timezone_get(),$data]);
+        info([__METHOD__,__LINE__,date_default_timezone_get(),date('Y-m-d H:i:s'),$data]);
         return $this->request($uri,$data);
     }
 
@@ -170,7 +170,7 @@ class ChinaUmsOrder extends BaseOrder
         $uri = '/netpay/refund' ;
         $data['requestTimestamp'] = date('Y-m-d H:i:s');
         $data['refundOrderId'] = $this->createMerOrderId();
-        info([__METHOD__,__LINE__,date_default_timezone_get(),$data]);
+        info([__METHOD__,__LINE__,date_default_timezone_get(),date('Y-m-d H:i:s'),$data]);
         return $this->request($uri,$data);
     }
 
