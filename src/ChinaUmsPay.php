@@ -226,7 +226,7 @@ class ChinaUmsPay
                 ])->getBody()->getContents();
 //            info([__METHOD__, __LINE__, $response]);
         } catch (GuzzleException $e) {
-            info([__METHOD__, __LINE__, $data,$headers,[$e->getMessage(),$e->getCode()],$e]);
+            info([__METHOD__, __LINE__,date_default_timezone_get(), $data,$headers,[$e->getMessage(),$e->getCode()],$e]);
 
 //            if (strpos($e->getMessage(), '认证失败') !== false) {
 //                //token过期 强制刷新

@@ -91,7 +91,7 @@ class BaseOrder extends ChinaUmsPay
             $this->headers['Authorization'] = $this->getOpenBodySig($body);
 //        }
 
-        info([__METHOD__, __LINE__, $uri, $data, $this->headers]);
+        info([__METHOD__, __LINE__, $uri,date_default_timezone_get(), $data, $this->headers]);
         $response = $this->sendRequest($uri, $data, ['headers' => $this->headers], $method);
         return $this->getResult($response);
     }
