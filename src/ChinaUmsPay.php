@@ -107,7 +107,7 @@ class ChinaUmsPay
         $cache = $this->getCache();
         while (!isset($mer_order_id) || $cache->has($mer_order_id)) {
             $micro = str_pad(substr($now->micro, 0, 3), 3, '0', STR_PAD_LEFT);
-            $mer_order_id = $this->msg_src_id . $now->format('YmdHis') . $micro . self::randNum(7);
+            $mer_order_id = $this->msg_src_id . date('YmdHis') . $micro . self::randNum(7);
         }
         $cache->set($mer_order_id, $mer_order_id, 5);
         return $mer_order_id;
@@ -190,7 +190,7 @@ class ChinaUmsPay
         }
         $cache = $this->getCache();
         $nonce = self::createUuid();
-        $timestamp = now()->format('YmdHis');
+        $timestamp = date('YmdHis');
         $data = [
             'appId' => $this->app_id,
             'timestamp' => $timestamp,
