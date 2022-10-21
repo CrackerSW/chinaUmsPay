@@ -22,7 +22,7 @@ class ChinaUmsOrder extends BaseOrder
     {
         $uri = '/netpay/wx/unified-order';
         $now = now('Asia/Shanghai');
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
         $data['merOrderId'] = $this->createMerOrderId();
         $data['tradeType'] = 'MINI';
         $data['instMid'] = self::getInstMid(1);
@@ -41,7 +41,7 @@ class ChinaUmsOrder extends BaseOrder
     {
         $uri = '/netpay/wx/app-pre-order';
         $now = now('Asia/Shanghai');
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
         $data['merOrderId'] = $this->createMerOrderId();
         $data['tradeType'] = 'APP';
         $data['instMid'] = self::getInstMid(2);
@@ -82,7 +82,7 @@ class ChinaUmsOrder extends BaseOrder
 //        $uri = '/netpay/trade/precreate';
         $uri = '/netpay/trade/app-pre-order';
         $now = now('Asia/Shanghai');
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
         $data['merOrderId'] = $this->createMerOrderId();
         $data['instMid'] = self::getInstMid(3);
 //        info([__METHOD__,__LINE__,date_default_timezone_get(),date('Y-m-d H:i:s'),$data]);
@@ -100,7 +100,7 @@ class ChinaUmsOrder extends BaseOrder
     {
         $uri = '/netpay/uac/mini-order';
         $now = now('Asia/Shanghai');
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
         $data['merOrderId'] = $this->createMerOrderId();
         $data['tradeType'] = 'MINI';
         $data['instMid'] = self::getInstMid(4);
@@ -119,7 +119,7 @@ class ChinaUmsOrder extends BaseOrder
     {
         $uri = '/netpay/uac/app-order';
         $now = now('Asia/Shanghai');
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
         $data['merOrderId'] = $this->createMerOrderId();
         $data['instMid'] = self::getInstMid(5);
 //        info([__METHOD__,__LINE__,date_default_timezone_get(),date('Y-m-d H:i:s'),$data]);
@@ -158,7 +158,7 @@ class ChinaUmsOrder extends BaseOrder
     {
         $uri = '/netpay/query';
         $now = now('Asia/Shanghai');
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
 //        $data['merOrderId'] = $order_no;
 //        info([__METHOD__,__LINE__,date_default_timezone_get(),date('Y-m-d H:i:s'),$data]);
         return $this->request($uri,$data);
@@ -175,7 +175,7 @@ class ChinaUmsOrder extends BaseOrder
     {
         $uri = '/netpay/refund' ;
         $now = now('Asia/Shanghai');
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
         $data['refundOrderId'] = $this->createMerOrderId();
 //        info([__METHOD__,__LINE__,date_default_timezone_get(),date('Y-m-d H:i:s'),$data]);
         return $this->request($uri,$data);
@@ -192,7 +192,7 @@ class ChinaUmsOrder extends BaseOrder
     {
         $uri = '/netpay/refund-query';
         $now = now('Asia/Shanghai');
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
 //        $data['merOrderId'] = $order_no;
 //        info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
@@ -205,7 +205,7 @@ class ChinaUmsOrder extends BaseOrder
     {
         $uri = '/netpay/close';
         $now = now('Asia/Shanghai');
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
         $data['merOrderId'] = $order_no;
 //        info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
@@ -222,7 +222,7 @@ class ChinaUmsOrder extends BaseOrder
     {
         $uri = '/netpay/sub-orders-confirm';
         $now = now('Asia/Shanghai');
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
 //        info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }

@@ -33,9 +33,9 @@ class ChinaUmsQrcodeOrder extends BaseOrder
         $uri = '/netpay/bills/get-qrcode';
         $data['billNo'] = $this->createMerOrderId();
         $now = now('Asia/Shanghai');
-        $data['billDate'] = $now()->format('Y-m-d H:i:s');
+        $data['billDate'] = $now->format('Y-m-d H:i:s');
         $data['instMid'] = self::QRPAY_INST_MID;
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
         //info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
@@ -52,7 +52,7 @@ class ChinaUmsQrcodeOrder extends BaseOrder
         $uri = '/netpay/bills/update-qrcode';
         $data['instMid'] = self::QRPAY_INST_MID;
         $now = now('Asia/Shanghai');
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
         //info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
@@ -69,7 +69,7 @@ class ChinaUmsQrcodeOrder extends BaseOrder
         $uri = '/netpay/bills/close-qrcode';
         $data['instMid'] = self::QRPAY_INST_MID;
         $now = now('Asia/Shanghai');
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
         //info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
@@ -86,7 +86,7 @@ class ChinaUmsQrcodeOrder extends BaseOrder
         $uri = '/netpay/bills/query';
         $data['instMid'] = self::QRPAY_INST_MID;
         $now = now('Asia/Shanghai');
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
         //info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
@@ -103,7 +103,7 @@ class ChinaUmsQrcodeOrder extends BaseOrder
         $uri = '/netpay/bills/refund' ;
         $data['instMid'] = self::QRPAY_INST_MID;
         $now = now('Asia/Shanghai');
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
         $data['refundOrderId'] = $this->createMerOrderId();
         //info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
@@ -118,7 +118,7 @@ class ChinaUmsQrcodeOrder extends BaseOrder
         $uri = '/netpay/bills/query-qrcode-info' ;
         $data['instMid'] = self::QRPAY_INST_MID;
         $now = now('Asia/Shanghai');
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
     }
 
     /**
@@ -132,7 +132,7 @@ class ChinaUmsQrcodeOrder extends BaseOrder
     {
         $uri = '/netpay/sub-orders-confirm';
         $now = now('Asia/Shanghai');
-        $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
+        $data['requestTimestamp'] = $now->format('Y-m-d H:i:s');
         //info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
