@@ -103,11 +103,11 @@ class ChinaUmsPay
      */
     public function createMerOrderId(): string
     {
-        $now = now();
+        $now = now('Asia/Shanghai');
         $cache = $this->getCache();
         while (!isset($mer_order_id) || $cache->has($mer_order_id)) {
             $micro = str_pad(substr($now->micro, 0, 3), 3, '0', STR_PAD_LEFT);
-            $mer_order_id = $this->msg_src_id . date('YmdHis') . $micro . self::randNum(7);
+            $mer_order_id = $this->msg_src_id . $now->format('YmdHis') . $micro . self::randNum(7);
         }
         $cache->set($mer_order_id, $mer_order_id, 5);
         return $mer_order_id;
@@ -169,8 +169,10 @@ class ChinaUmsPay
     {
         $appid = $this->app_id;
         $appkey = $this->app_key;
-        $timestamp = date("YmdHis", time());
-        $nonce = md5(uniqid(microtime(true), true));
+        $now = now('Asia/Shanghai');
+        $timestamp = $now->format('YmdHis');
+        $micro = $now->getPreciseTimestamp() / 1000000;
+        $nonce = md5(uniqid($micro, true));
         $str = bin2hex(hash('sha256', $body, true));
 
         $signature = base64_encode(hash_hmac('sha256', "$appid$timestamp$nonce$str", $appkey, true));
@@ -190,7 +192,8 @@ class ChinaUmsPay
         }
         $cache = $this->getCache();
         $nonce = self::createUuid();
-        $timestamp = date('YmdHis');
+        $now = now('Asia/Shanghai');
+        $timestamp = $now->format('YmdHis');
         $data = [
             'appId' => $this->app_id,
             'timestamp' => $timestamp,
@@ -226,7 +229,7 @@ class ChinaUmsPay
                 ])->getBody()->getContents();
 //            info([__METHOD__, __LINE__, $response]);
         } catch (GuzzleException $e) {
-            info([__METHOD__, __LINE__,date_default_timezone_get(), $data,$headers,[$e->getMessage(),$e->getCode()],$e]);
+            info([__METHOD__, __LINE__, $data,$headers,[$e->getMessage(),$e->getCode()],$e]);
 
 //            if (strpos($e->getMessage(), '认证失败') !== false) {
 //                //token过期 强制刷新

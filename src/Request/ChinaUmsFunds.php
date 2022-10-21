@@ -74,6 +74,8 @@ class ChinaUmsFunds
     protected $private_key_password;
     protected $public_key;
 
+    protected static $now;
+
     public function __construct(array $config)
     {
         $this->debug = $config['debug'] ?? $this->debug;
@@ -88,6 +90,7 @@ class ChinaUmsFunds
         } else {
             $this->url = "https://im.chinaums.com/channel/Business/UnifyMulti/"; #正式地址
         }
+        self::$now = now('Asia/Shanghai');
     }
 
     /**
@@ -212,8 +215,8 @@ class ChinaUmsFunds
         return [
             'transCode' => $transCode,
             'verNo' => $this->verNo,
-            'srcReqDate' => now()->format('Ymd'),
-            'srcReqTime' => now()->format('His'),
+            'srcReqDate' => self::$now->format('Ymd'),
+            'srcReqTime' => self::$now->format('His'),
             'srcReqId' => self::generateUniqueNumber(),
             'channelId' => $this->channelId,
             'groupId' => $this->group_id
@@ -223,9 +226,8 @@ class ChinaUmsFunds
 
     protected static function generateUniqueNumber(): string
     {
-        $now = now();
-        $micro = str_pad(substr($now->micro, 0, 3), 3, '0', STR_PAD_LEFT);
-        return $now->format('YmdHis') . $micro . self::randNum(10, 3);
+        $micro = str_pad(substr(self::$now->micro, 0, 3), 3, '0', STR_PAD_LEFT);
+        return self::$now->format('YmdHis') . $micro . self::randNum(10, 3);
     }
 
     /**
