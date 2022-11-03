@@ -104,7 +104,9 @@ class ChinaUmsQrcodeOrder extends BaseOrder
         $data['instMid'] = self::QRPAY_INST_MID;
         $now = now('Asia/Shanghai');
         $data['requestTimestamp'] = $now()->format('Y-m-d H:i:s');
-        $data['refundOrderId'] = $this->createMerOrderId();
+		if (!isset($data['refundOrderId']) || !$data['refundOrderId']) {
+			$data['refundOrderId'] = $this->createMerOrderId();
+		}
         //info([__METHOD__,__LINE__,$uri,$data]);
         return $this->request($uri,$data);
     }
