@@ -172,6 +172,20 @@ class ChinaUmsFunds
         return $this->sendRequest($post_data);
     }
 
+	/**
+	 * ex :
+	 * 202004 :query merno info
+	 */
+	public function transcodeSplitByMoney($data)
+	{
+		$data['cardNo'] = hash($this->card_no_algo,$data['cardNo']);
+		$data['payType'] = 0;
+		$header = $this->getHeader(self::TRANSCODE_SPLIT_BY_MONEY);
+		$post_data = array_merge($header, $data);
+//        info([__METHOD__, __LINE__,$post_data]);
+		return $this->sendRequest($post_data);
+	}
+
     public function transcodeDetailQuery($data)
     {
         $header = $this->getHeader(self::TRANSCODE_DETAIL_QUERY);
