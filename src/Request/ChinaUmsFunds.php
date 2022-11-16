@@ -178,8 +178,19 @@ class ChinaUmsFunds
 	 */
 	public function transcodeSplitByMoney($data)
 	{
+		if (!isset($data['cardNo']) || !$data['cardNo']) {
+			$this->error_message = '银行卡号不能为空';
+			throw new InvalidArgumentException($this->error_message);
+		}
+
+		if (!isset($data['ps']) || !$data['ps']) {
+			$this->error_message = '附言不能为空';
+			throw new InvalidArgumentException($this->error_message);
+		}
+
 		$data['cardNo'] = hash($this->card_no_algo,$data['cardNo']);
-		$data['payType'] = 0;
+		$data['payType'] = '0';
+		$data['ps'] = urlencode($data['ps']);
 		$header = $this->getHeader(self::TRANSCODE_SPLIT_BY_MONEY);
 		$post_data = array_merge($header, $data);
 //        info([__METHOD__, __LINE__,$post_data]);
