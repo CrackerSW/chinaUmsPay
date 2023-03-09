@@ -126,7 +126,7 @@ class ChinaUmsFunds
      */
     public function transcodePayByJournal($data)
     {
-//        $data['groupId'] = $this->group_id;
+        $data['payAmt'] = (string)$data['payAmt'];
         $header = $this->getHeader(self::TRANSCODE_PAY_BY_JOURNAL);
         $post_data = array_merge($header, $data);
         info([__METHOD__, __LINE__,$post_data]);
