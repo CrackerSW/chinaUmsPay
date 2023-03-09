@@ -224,7 +224,7 @@ class ChinaUmsFunds
         $result = Http::withHeaders([
             "Content-type" =>"application/json"
         ])->post($url, $data)->throw();
-
+	    info([__METHOD__, __LINE__, $result]);
         return $result;
     }
 
