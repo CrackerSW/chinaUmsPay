@@ -129,7 +129,7 @@ class ChinaUmsFunds
 //        $data['groupId'] = $this->group_id;
         $header = $this->getHeader(self::TRANSCODE_PAY_BY_JOURNAL);
         $post_data = array_merge($header, $data);
-//        info([__METHOD__, __LINE__,$post_data]);
+        info([__METHOD__, __LINE__,$post_data]);
         return $this->sendRequest($post_data);
     }
 
@@ -220,7 +220,7 @@ class ChinaUmsFunds
         $signature = $this->sign($data);
         $data['signature'] = $signature;
         $url = $this->url . $data['transCode'];
-//        info([__METHOD__, __LINE__, $url,$data]);
+        info([__METHOD__, __LINE__, $url,$data]);
         $result = Http::withHeaders([
             "Content-type" =>"application/json"
         ])->post($url, $data)->throw();
