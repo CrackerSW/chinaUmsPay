@@ -221,10 +221,14 @@ class ChinaUmsFunds
         $data['signature'] = $signature;
         $url = $this->url . $data['transCode'];
         info([__METHOD__, __LINE__, $url,$data]);
-        $result = Http::withHeaders([
-            "Content-type" =>"application/json"
-        ])->post($url, $data)->throw();
-	    info([__METHOD__, __LINE__, $result]);
+	    try {
+		    $result = Http::withHeaders([
+			    "Content-type" =>"application/json"
+		    ])->post($url, $data)->throw();
+	    } catch (\Exception $e) {
+			info([__METHOD__, __LINE__,$e]);
+			throw $e;
+	    }
         return $result;
     }
 
